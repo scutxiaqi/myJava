@@ -1,6 +1,9 @@
-RPC通信和普通http有什么区别？
-	RPC要快一下（RPC协议更加精简）
-	http更加通用（dubbo需要消费端和服务端都使用RPC框架）
+dubbo和springcloud的对比
+	
+RPC框架和普通http有什么区别？
+rpc和http的区别，为什么用rpc通信不用http，长连接？
+RPC和restful的区别
+
 
 dubbo原理？如何实现一个RPC框架？
 	说说远程调用：效果就是调用远程的接口就像在本地调用一样。具体步骤：
