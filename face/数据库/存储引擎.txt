@@ -1,0 +1,11 @@
+
+InnoDB、MyISAM的区别
+
+1）事务：MyISAM不支持，InnoDB支持
+2）锁级别： MyISAM 表锁，InnoDB 行锁、表锁
+3）MyISAM采用非聚集索引、InnoDB主键索引采用聚集索引
+
+
+适用场景：
+MyISAM适合： 插入不频繁，查询非常频繁，如果执行大量的SELECT，MyISAM是更好的选择， 没有事务。
+InnoDB适合： 可靠性要求比较高，或者要求事务； 表更新和查询都相当的频繁， 大量的INSERT或UPDATE

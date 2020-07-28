@@ -1,0 +1,19 @@
+1.http与https的区别
+http是超文本传输协议，信息是明文传输；https是HTTP的安全版，服务端和客户端之间的所有通讯,都是加密的
+端口不一样,前者是80,后者是443
+
+2.http状态码
+200  OK         正常返回信息
+302 Found       临时性重定向。
+404 Not Found   找不到与 URI 相匹配的资源。
+500 Internal Server Error  最常见的服务器端错误。
+
+3.Get 和 Post 区别
+Get：
+     GET请求的数据是放在HTTP包头中，也就是URL之后
+     GET提交的数据比较少，最多1024字节
+
+Post：
+      Post是把提交的数据放在HTTP正文中
+      Post可传较大量的数据，理论上没有限制
+      POST的安全性要比GET的安全性高

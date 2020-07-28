@@ -1,0 +1,23 @@
+1.Servlet与JSP有什么区别？
+Servlet和JSP完成的功能是相同的，都可以生成动态网页。
+
+JSP的优点是擅长于网页制作，生成动态页面比较直观，缺点是不容易跟踪与排错。
+Servlet是纯Java语言，擅长于处理流程和业务逻辑，缺点是生成动态网页不直观。
+
+2.谈谈Servlet的生命周期
+servlet容器创建servlet对象  调用init()方法  完成创建。
+响应客户请求阶段 容器会创建针对于请求的servletRequest于servletResponse　然后调用service()方法；当容器把servlet生成的响应结果发送给客户，容器就会销毁request和response对象。
+终止阶段　　容器在销毁该实例前调用servlet的destroy（）方法
+
+3.servlet线程安全
+线程安全问题都是由全局变量及静态变量引起的
+servlet类只创建一个实例，对于客户端的并发访问，它不是线程安全的。
+不应该在servlet中定义实例变量。
+可以通过加锁保证线程安全，但对于高并发访问，性能下降。
+
+一个ServletMapping对应一个servlet单例实例
+
+4.Servlet监听器
+采用了观察者模式
+Listener用于监听一些重要事件的发生，监听器对象可以在事情发生前、发生后可以做一些必要的处理。
+sample：计算在线的用户的数量。

@@ -1,0 +1,13 @@
+session机制，容器是怎么管理session的？
+1.登陆时，它给客户端生成一个sessionId，并放到cookie域里
+2.请求时，sessionId值跟随cookie一起传递到服务器
+3.通过sessionId找到内存中存储的该用户的session，session在内存中的数据结构是一个map格式
+
+
+
+
+
+Tomcat&&Jboss
+Tomcat servlet容器   开源
+Jboss  servlet容器，而且是EJB容器  有免费、企业版   jboss内置的就是tomcat
+如果系统不是很大并且并发不是特别高的话，建议使用tomcat，jboss毕竟是重量级的，在大中型系统高并发方面有优势。tomcat小巧，可满足一般需求。

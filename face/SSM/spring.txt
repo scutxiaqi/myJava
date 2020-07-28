@@ -1,0 +1,35 @@
+spring优点
+用依赖注入模式大幅度的减少了程序之间的耦合性 并很好的实现了各种JAVA的设计模式 强制使用者养成用接口编程的习惯
+
+C.Ioc容器
+IOC的层次含义是依赖注入，通俗点就是我们不需要自己new对象，需要得到对象的时候由容器注入，消减系统的耦合问题。当系统越来越复杂的情况下，好处体现的更加明显
+其实现是运用java反射机制
+BeanFactory原理
+DefaultListableBeanFactory一个功能完整的IOC容器实现
+用了一个Map，里面存的是BeanDefinition，key用bean id
+BeanDefinition 代表xml中一个Bean，管理Bean信息
+BeanDefinitionReader解析器，读取xml信息
+
+spring  容器初始化 bean 和销毁前所做的操作定义方式有三种：
+第一种：通过@PostConstruct 和 @PreDestroy 方法 实现初始化和销毁bean之前进行的操作
+第二种是：通过 在xml中定义init-method 和  destory-method方法
+第三种是： 通过bean实现InitializingBean和 DisposableBean接口
+
+DisposableBean在一个bean被销毁的时候，spring容器会自动执行这个方法，用于使用完之后需要释放资源的bean
+
+
+D.实例化 Bean 的方式 
+一、构造器实例化；
+二、静态工厂方法实例化；
+三、动态工厂方法实例化。（方法为非静态的）
+
+
+
+AOP
+AOP面向切面编程，把散落在程序中的公共部分提取出来，做成切面。如事物、权限、日志等。使程序员专注于业务的开发。
+公共部分代码的可重用
+
+实现AOP会用到JDK动态代理和cglib库
+如果目标对象实现了接口，默认情况下会采用JDK动态代理实现AOP
+如果目标对象没有实现接口，就会采用CGLIB库
+java动态代理是利用反射机制生成一个实现代理接口的代理类，在调用具体方法时调用InvocationHandler的invoke(）方法来处理。cglib利用asm开源包，通过修改目标对象字节码生成子类，覆盖其中的方法来处理。

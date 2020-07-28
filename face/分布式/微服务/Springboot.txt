@@ -1,0 +1,7 @@
+
+0.什么是SpringBoot？
+  	SpringBoot是一个框架。用来简化Spring应用开发、配置、部署等
+
+
+1.核心注解是哪个？
+  	启动类上面的注解是@SpringBootApplication

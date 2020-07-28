@@ -1,0 +1,10 @@
+两个项目之间如何通信？
+
+两个web项目之间通信  用http,webservice 
+数据简单，  用http
+数据很复杂，用webservice（可以传递对象）
+
+socket web项目主动连桌面系统 就用 socket通信
+
+webservice框架
+Axis  XFire  CXF

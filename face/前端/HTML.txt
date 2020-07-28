@@ -1,0 +1,36 @@
+1.HTML5新特性？
+语意化更好的内容元素，比如 article、footer、header、nav、section;
+表单控件，calendar、date、time、email、url、search;
+绘图 canvas;
+用于多媒体的 video 和 audio 元素;
+本地存储 localStorage 长期存储数据，浏览器关闭后数据不丢失;sessionStorage 的数据在浏览器关闭后自动删除;离线存储manifest
+新的技术webworker, websocket, Geolocation;
+
+webworker javascript多线程解决方案
+websocket 服务器与浏览器双向实时通讯
+离线存储
+在线的情况下，浏览器发现html头部有manifest属性，它会请求manifest文件，如果是第一次访问app，那么浏览器就会根据manifest文件的内容下载相应的资源并且进行离线存储。如果已经访问过app并且资源已经离线存储了，那么浏览器就会使用离线的资源加载页面，然后浏览器会对比新的manifest文件与旧的manifest文件，如果文件没有发生改变，就不做任何操作，如果文件改变了，那么就会重新下载文件中的资源并进行离线存储。
+离线的情况下，浏览器就直接使用离线存储的资源。
+
+
+2.cookies，sessionStorage 和 localStorage 的区别
+cookie会在浏览器和服务器间来回传递。sessionStorage和localStorage仅在本地保存。
+存储大小：
+    cookie数据大小不能超过4k。
+    sessionStorage和localStorage 虽然也有存储大小的限制，但比cookie大得多，可以达到5M或更大。
+有期时间：
+    localStorage    存储持久数据，浏览器关闭后数据不丢失除非主动删除数据；
+    sessionStorage  数据在当前浏览器窗口关闭后自动删除。
+    cookie          设置的cookie过期时间之前一直有效
+
+
+
+<script> 位置
+<head>元素中包含所有JavaScript文件，必须等到全部JavaScript代码都被下载、解析和执行完成以后，才能开始呈现页面的内容（浏览器在遇到<body>标签时才开始呈现内容）
+会导致呈现页面时出现明显的延迟
+
+
+
+
+
+

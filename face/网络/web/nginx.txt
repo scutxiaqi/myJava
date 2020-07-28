@@ -1,0 +1,29 @@
+
+如何判断Tomcat是否挂掉？
+Ngninx自带健康检查模块，能将挂掉的服务器舍弃
+
+
+
+
+
+
+
+
+
+HTTP服务器    绑定IP地址并监听tcp端口来提供HTTP服务
+
+Apache/Nginx  HTTP服务器，静态服务器
+Tomcat        应用服务器，servlet容器，用来生成动态页面
+
+
+Apache/Nginx 在负载均衡里是前端服务器，用来处理请求的转发（反向代理等）
+tomcat是后端服务器，是直接用来运行项目的容器。
+
+
+发出一个请求，先经过nginx，他会合理地把请求分配到后台不忙的tomcat，tomcat把请求处理好返回给nginx。
+nginx把请求结果告诉你。如果是一些静态的数据，nginx直接返回给你。
+
+
+Nginx
+1.动静态资源分离：（例如图片、视频、CSS、JavaScript文件等）直接由Nginx返回
+2.负载均衡：把请求通过算法分发到各个不同的tomcat进行处理

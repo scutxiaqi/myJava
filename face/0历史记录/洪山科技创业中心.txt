@@ -1,0 +1,12 @@
+
+
+
+MQ除了Rabbit，还用过哪个
+1. MQ消息丢失、消息重复
+
+
+2. redis集群，redis分布式锁的实现
+
+
+
+3.MySQL索引数据结构BTree、hash

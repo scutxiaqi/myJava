@@ -1,0 +1,41 @@
+1.单例模式
+保证一个类仅有一个实例。如：线程池、
+
+2.模版方法模式
+当不变的和可变的行为在方法中混合在一起时。通过此模式把不变的行为搬到抽象类中，提升代码的复用
+如：访问数据库的过程
+
+3.工厂模式
+控制反转原则；编写松耦合代码，面向接口编程。如：IOC容器
+简单工厂模式 把所有的生产对象化都写进了一个类的工厂方法里面。 
+工厂方法模式 就是每个产品都对应一个生成产品的工厂类。通过工厂类的多态避免了判断。开闭原则
+如：IOC容器
+
+4.外观模式
+为复杂的子系统（会有很多类）提供一个简单的接口，使得耦合大大降低，减少它们的之间的依赖。
+如：service
+
+5.适配器模式
+复用了已有的类，解决了已有类和现有环境要求不一致的问题
+
+6.观察者模式
+当一个对象的状态发生变化时，通知其关联对象，更新状态。
+放风者、偷窃者案例
+
+servlet监听器
+
+7.代理模式
+为其他对象提供一种代理以控制对这个对象的访问。
+在访问对象时引入一定程度的间接性，这种间接性，可以附加多种功能
+如：AOP
+
+动态代理
+一个典型的动态代理创建对象过程可分为以下四个步骤：
+1、通过实现InvocationHandler接口创建自己的调用处理器 IvocationHandler handler = new InvocationHandlerImpl(...);
+2、通过为Proxy类指定ClassLoader对象和一组interface创建动态代理类
+Class clazz = Proxy.getProxyClass(classLoader,new Class[]{...});
+3、通过反射机制获取动态代理类的构造函数，其参数类型是调用处理器接口类型
+Constructor constructor = clazz.getConstructor(new Class[]{InvocationHandler.class});
+4、通过构造函数创建代理类实例，此时需将调用处理器对象作为参数被传入
+Interface Proxy = (Interface)constructor.newInstance(new Object[] (handler));
+为了简化对象创建过程，Proxy类中的newInstance方法封装了2~4，只需两步即可完成代理对象的创建。

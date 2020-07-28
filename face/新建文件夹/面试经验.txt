@@ -1,0 +1,64 @@
+上海有点信息
+1.springMVC一次请求流程
+2.socket用过吗？
+3.服务器集群怎样？nginx用了哪些模块？
+4.redis用过吗？
+5.jvm调优
+6.hql可以用正则表达式吗
+
+小象羽
+1.static关键字对于相关内存有什么影响？（在加载时机和占用内存上，静态方法和实例方法一样）
+2.struts2 action和springMVC controller 区别
+3.防止重复提交
+4.存储过程 循环 有几种？
+5.memcached怎么用，存放哪些数据？
+
+网源传媒
+1.jquery 前一个兄弟节点，怎么找？
+2.try catch finally System输出顺序
+3.项目里用到了哪些设计模式，举例说明
+4.Mybatis版本， # 和$ 的区别
+5.Redis版本  数据类型
+6.数据库调优  SQL调优 explain  慢查询
+7.java8
+8.工作流
+
+蜡烛科技
+1.支付部分介绍一下
+2.java 编码
+3.springMVC常用注解
+
+同和中控
+1.存储过程 2.spring 3.动态代理 4.设计模式 5.缓存 6.nginx 7.dubbo
+
+
+夸客金融  电话面试  技术问的比较全面，java、js都有
+# js原型链
+
+智匠科技   js方面难住了
+# ajax跨域
+
+停车爽（创业型）  技术问得很少，公司有前端，招人只做java  非技术问题被pass
+# 多线程理解
+
+倚天剑科技 js方面有  薪资达不到要求
+1.同步、异步 ajax aync
+2.字符串校验
+3.jquery checkbox选择器
+4.jquery each()
+
+# io包api
+
+数元网络（创业型）js方面有  非技术问题被pass
+1.html5新特性
+2.jquery checked选择器
+3.jquery bind()on()live()
+
+# 数据库优化、sql优化
+# 索引类型的区别和用途
+# 注解
+# 事务原理
+
+
+
+

@@ -1,0 +1,10 @@
+
+Mybatis 中“#”与“$”区别
+#传入的参数在SQL中显示为字符串，$传入的参数在SqL中直接显示为传入的值。
+1. #会对自动传入的数据加一个双引号。
+select * student where id =#{id} 会解析为 select * student where id = "2"
+select * student where id =${id} 会解析为 select * student where id = 2
+
+
+
+

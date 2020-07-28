@@ -1,0 +1,20 @@
+1.group by  & having用法
+WHERE无法与函数一起使用，HAVING可以
+SELECT Customer,SUM(OrderPrice) FROM Orders GROUP BY Customer HAVING SUM(OrderPrice)<2000
+电商中对用户分组得出每人消费总金额，并且订单总金额少于2000
+
+
+2.left join & right join区别
+左外连接left join
+返回符合的连接条件的行，还包含左表中的其它所有数据行。
+right join
+返回符合的连接条件的行，还包含右表中的其它所有数据行。
+
+
+3.union和union all的区别
+合并两个或多个 SELECT 语句的结果集，union去重，union all全部显示
+
+4.分页
+mysql> SELECT * FROM table LIMIT 0,10; // 检索1-10条数据
+
+

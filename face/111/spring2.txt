@@ -1,0 +1,22 @@
+A.事务隔离级别
+Read Uncommitted（读取未提交内容）
+如果事务回滚，会产生脏读
+Read Committed（读取提交内容）
+Repeatable Read（可重读）---MySql默认
+同一事务的多个实例在并发读取数据时，会看到同样的数据行。
+幻读，一个事务的两次查询中数据行数不一致
+
+Serializable（可串行化） 
+解决幻读
+
+B.事务传播
+1.required     支持当前事务，如果当前没有事务，就新建一个事务
+methodA调用methodB；methodA或者methodB内的任何地方出现异常，事务都会被回滚
+2.supports     支持当前事务，如果当前没有事务，就直接执行。 
+4.requires_new 新建事务，如果当前存在事务，把当前事务挂起。
+5.not_supported以非事务方式执行操作，如果当前存在事务，就把当前事务挂起 
+6.never        以非事务方式执行，如果当前存在事务，则抛出异常。
+
+3.mandatory    支持当前事务，如果当前没有事务，就抛出异常
+7.nested
+Spring默认情况下会对RunTimeException进行事务回滚

@@ -1,0 +1,26 @@
+1.常用的集合类HashMap、HashTable、ArrayList、LinkedList、HashSet
+2.java编码
+
+wait和sleep的区别
+synchronized和Lock的区别
+
+hibernate和mybatis区别
+hibernate缓存机制
+
+spring IOC、aop实现原理
+事务隔离级别
+事务传播
+
+0.union和union all的区别、连接查询
+1.数据库引擎的区别
+2.各种索引类型的区别和用途
+3.数据库性能优化
+4.MySQL和Oracle的区别
+
+设计模式
+
+大并发访问的应对策略
+
+
+
+画出正在做的B2B平台的架构图，包括各子系统(ec,buyer,seller,message,order)、SOA（dubbo）、缓存redis、消息rabbitmq、单点登陆CAS、负载均衡nginx，MySQL数据库读写分离，邮件服务器postfix

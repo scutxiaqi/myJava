@@ -1,0 +1,15 @@
+# 数据类型
+数值型、string、布尔、null、undefined、object
+
+如何判断某变量是否为数组类型？
+obj instanceof Array 
+function isArray(o) { 
+  return Object.prototype.toString.call(o) === '[object Array]';  
+}
+
+Javascript的事件流模型?
+“DOM事件流”：三个阶段：事件捕获，目标阶段，事件冒泡(IE模型)
+
+正则表达式
+手机号码验证：/^1[0-9]{9}$/
+^开头，$结尾，\d表示匹配[0-9]，{9}重复9位

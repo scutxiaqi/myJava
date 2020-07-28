@@ -1,0 +1,28 @@
+
+
+
+RESTful架构风格
+URL定位资源，用HTTP动词（GET,POST,DELETE,PUT）描述操作。(增删改查都是一个地址，具体靠http头部信息判断。)
+平时做项目时，是基于动作的，比如删除用户，会请求一个delete方法；RESTful是基于资源的
+get 请求资源（只读）
+post 添加资源
+delete删除资源
+put 更新资源
+好处：管理URL
+缺点：不是所有东西都能够被抽象成资源
+
+
+比如：用户登陆、退出登陆 post /login  、delete /login
+添加用户 post /user     /deleteUser 不合法
+
+
+sql注入
+or 1=1
+不要使用动态拼装SQL
+参数化查询Prepared Statement ：含有占位符的SQL语句先行一步传递到RDBMS上面进行预编译，然后再传递实际的参数，最后执行SQL。
+
+
+测试
+主要进行功能测试、性能测试
+
+

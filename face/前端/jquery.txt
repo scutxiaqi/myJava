@@ -1,0 +1,18 @@
+
+bind(),live(),delegate(),on()的区别
+bind()：绑定匹配元素上，不支持动态元素
+live()：绑定到document元素，支持动态添加的元素
+delegate 绑定到元素上，使用事件代理（通过冒泡），支持动态添加的元素
+on()    代替上述的3种方法
+
+
+$(document).ready() 与window.onload的区别
+ready是window.load的替代
+window.onload必须等到页面内包括图片的所有元素加载完毕后才能执行。ready()是DOM结构绘制完毕后就执行，不必等到加载完毕。
+window.onload不能同时编写多个，如果有多个window.onload方法，只会执行一个；ready()可以同时编写多个，并且都可以得到执行 
+
+
+attr() 和 prop() 的区别
+具有 true 和 false 值的属性，如 checked, selected 或者 disabled 使用prop()，其他的使用 attr()
+
+
