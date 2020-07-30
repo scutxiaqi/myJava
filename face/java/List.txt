@@ -1,0 +1,21 @@
+ArrayList,Vector
+	ArrayList和Vector都是使用数组方式存储数据，Vector是线程安全的。
+ArrayList 
+	不带参数的构造方法生成对象时，生成一个长度为10的Object类型数组。
+	复制方式来扩充容量，扩充1.5倍。
+	System.arraycopy为C++编写的底层函数，直接对内存中的数据块进行复制的，是一整块一起复制的而采用下标一个一个地进行	赋值时，时间主要浪费在了寻址和赋值上。
+	数组是Native的线性序列，所以效率高
+
+ArrayList与LinkedList区别
+	ArrayList 数据结构是数组，读取数据快
+	LinkedList底层是双链表写数据时（增/删）性能更好
+
+ArrayList与HashSet区别
+	ArrayList元素有序，允许元素重复
+	HashSet 元素无序，元素不重复
+
+CopyOnWriteArrayList
+	线程安全的ArrayList
+	原理：运用了一种“ 写时复制”的思想：写操作（增/删/改）时，在列表副本上写，最后将引用指向新列表
+	         读操作（不加锁）在原列表，写操作（加锁）在新列表
+	适合场景：读多写少。不适合大数据量(会造成频繁GC)

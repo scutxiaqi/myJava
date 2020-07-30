@@ -8,11 +8,11 @@ public class ArrayList8<E> extends AbstractList<E> {
      * 初始化容量大小为10
      */
     private static final int DEFAULT_CAPACITY = 10;
-    
+
     private static final Object[] EMPTY_ELEMENTDATA = {};
 
     private static final Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = {};
-    
+
     transient Object[] elementData;
 
     /**
@@ -26,15 +26,14 @@ public class ArrayList8<E> extends AbstractList<E> {
     public ArrayList8() {
         this.elementData = DEFAULTCAPACITY_EMPTY_ELEMENTDATA;
     }
-    
+
     public ArrayList8(int initialCapacity) {
         if (initialCapacity > 0) {
             this.elementData = new Object[initialCapacity];
         } else if (initialCapacity == 0) {
             this.elementData = EMPTY_ELEMENTDATA;
         } else {
-            throw new IllegalArgumentException("Illegal Capacity: "+
-                                               initialCapacity);
+            throw new IllegalArgumentException("Illegal Capacity: " + initialCapacity);
         }
     }
 
@@ -103,6 +102,50 @@ public class ArrayList8<E> extends AbstractList<E> {
     }
 
     public E get(int index) {
-        return null;
+        rangeCheck(index);
+        return elementData(index);
+    }
+
+    /**
+     * 按索引删除元素
+     */
+    public E remove(int index) {
+        // 如果索引值大于ArrayList里元素的个数，则抛出索引越界异常
+        rangeCheck(index);
+        modCount++;
+        // 用oldValue 保存要删除的值
+        E oldValue = elementData(index);
+        int numMoved = size - index - 1;
+        if (numMoved > 0) {
+            /**
+             * @param      src      源数组
+             * @param      srcPos   源数组的起始位置
+             * @param      dest     目标数组
+             * @param      destPos  目标数组的起始位置
+             * @param      length   复制的长度
+             * arraycopy(Object src,int srcPos,Object dest, int destPos,int length)
+             */
+            System.arraycopy(elementData, index + 1, elementData, index, numMoved);
+        }
+        elementData[--size] = null; // clear to let GC do its work
+        return oldValue;
+    }
+
+    @SuppressWarnings("unchecked")
+    E elementData(int index) {
+        return (E) elementData[index];
+    }
+
+    /**
+     * 如果索引值大于ArrayList里元素的个数，则抛出索引越界异常
+     * @param index
+     */
+    private void rangeCheck(int index) {
+        if (index >= size)
+            throw new IndexOutOfBoundsException(outOfBoundsMsg(index));
+    }
+
+    private String outOfBoundsMsg(int index) {
+        return "Index: " + index + ", Size: " + size;
     }
 }
