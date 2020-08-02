@@ -6,7 +6,7 @@ SELECT Customer,SUM(OrderPrice) FROM Orders GROUP BY Customer HAVING SUM(OrderPr
 
 2.left join & right join区别
 左外连接left join
-返回符合的连接条件的行，还包含左表中的其它所有数据行。
+返回左表中所有数据，右表符合条件的数据。
 right join
 返回符合的连接条件的行，还包含右表中的其它所有数据行。
 
