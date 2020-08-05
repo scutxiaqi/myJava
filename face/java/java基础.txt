@@ -1,28 +1,21 @@
-1.面向对象特性
+面向对象特性
 	继承、封装
 	多态（一个接口，多种实现）
-2.String、StringBuffer、StringBuilder
+String、StringBuffer、StringBuilder
 	String是不可变字符串；后两者是可变字符串，StringBuilder线程不安全
 为什么重写equals一定要重写hashcode？
 	equals默认是比较两者内存地址，hashcode默认根据对象内存地址计算出hash值
 	如果不重写hashcode，集合类如HashSet就用不了了
-
-4.final, finally, finalize的区别
-final 用于声明属性，方法和类，分别表示属性不可变，方法不可覆盖，类不可继承。
-finally是异常处理语句结构的一部分，表示总是执行。 
-finalize是Object类的一个方法，在垃圾收集器执行的时候会调用被回收对象的此方法
-
-5.error和exception有什么区别
-error 表示恢复不是不可能但很困难的情况下的一种严重问题。比如说内存溢出。
-exception 表示一种设计或实现问题。也就是说，它表示如果程序运行正常，从不会发生的情况。
-
-6.swtich
-只能用byte short int char enum
-
-7.JAVA参数传递
-基本数据类型传递的是值，引用类型传递的是引用，即地址。
-
-8.throws与throw的区别
-throw用来在方法体内抛出异常，而throws用来在方法声明处声明异常。
+final, finally, finalize的区别
+	final 用于声明属性，方法和类，分别表示属性不可变，方法不可覆盖，类不可继承。
+	finally是异常处理语句结构的一部分，表示总是执行。 
+	finalize是Object类的一个方法，在垃圾收集器执行的时候会调用被回收对象的此方法
+error和exception有什么区别
+	error 表示恢复不是不可能但很困难的情况下的一种严重问题。比如说内存溢出。
+	exception 表示一种设计或实现问题。也就是说，它表示如果程序运行正常，从不会发生的情况。
+JAVA参数传递
+	基本数据类型传递的是值，引用类型传递的是引用，即地址。
+throws与throw的区别
+	throw用来在方法体内抛出异常，而throws用来在方法声明处声明异常。
 
 
