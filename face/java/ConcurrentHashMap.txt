@@ -1,9 +1,13 @@
 对ConcurrentHashMap的理解？
-是线程安全版的HashMap，底层数据结构和HashMap一样，只是加入了线程安全的保障。
+	是线程安全版的HashMap，底层数据结构和HashMap一样，只是加入了线程安全的保障。
 
 
 ConcurrentHashMap是如何保证线程安全的？
-利用CAS和分位置加锁（锁住数组中每个位置的头节点）
+       采用CAS和synchronized来保证线程安全
+       以put方法为例：
+	1.如果对应槽位没有元素，则用CAS方式添加元素
+	2.如果槽位有元素了，用synchronized加锁，然后添加元素
+	
 
 
 size()方法如何保证线程安全？（基于CAS）

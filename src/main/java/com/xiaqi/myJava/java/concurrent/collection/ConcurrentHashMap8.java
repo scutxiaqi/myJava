@@ -49,11 +49,10 @@ public class ConcurrentHashMap8<K, V> {
      */
     private transient volatile Node<K, V>[] nextTable;
     /**
-     * 控制table的初始化和扩容.
-     * 0  : 初始默认值
-     * -1 : 有线程正在进行table的初始化
-     * >0 : table初始化时使用的容量，或初始化/扩容完成后的threshold
-     * -(1 + nThreads) : 记录正在执行扩容任务的线程数
+     * 控制table的初始化和扩容.<br>
+     * 0  : 初始默认值<br>
+     * sizeCtl<0 : 意味着有线程正在初始化或者扩容数据;sizeCtl=-1表示table正在进行初始化;sizeCtl=-(1 + nThreads)记录正在执行扩容任务的线程数<br>
+     * sizeCtl>0 : 值为table的threshold扩容阈值<br>
      */
     private transient volatile int sizeCtl;
     /**
@@ -88,7 +87,7 @@ public class ConcurrentHashMap8<K, V> {
         }
         int hash = spread(key.hashCode());
         int binCount = 0;
-        for (Node<K, V>[] tab = table;;) {// 无限循环
+        for (Node<K, V>[] tab = table;;) {// 死循环
             Node<K, V> f;// 表示i位置第一个node
             int n, i, fh; // i表示新元素在数组中对位置，fh表示f节点的hash值
             if (tab == null || (n = tab.length) == 0) {// 如果数组是空的，初始化数组
@@ -97,7 +96,7 @@ public class ConcurrentHashMap8<K, V> {
                 // 如果添加节点成功，跳出循环
                 if (casTabAt(tab, i, null, new Node<K, V>(hash, key, value, null)))
                     break;
-            } else if ((fh = f.hash) == MOVED)// 如果在进行扩容，则先进行扩容操作
+            } else if ((fh = f.hash) == MOVED)// 如果对应槽位不为空，且他的 hash 值是 -1，说明正在扩容，那么就帮助其扩容。以加快速度
                 tab = helpTransfer(tab, f);
             else {
                 V oldVal = null;
@@ -145,9 +144,16 @@ public class ConcurrentHashMap8<K, V> {
         return null;
     }
 
+    /**
+     * 做了2件事情:
+     * 1.对map的size加1
+     * 2.检查是否需要扩容，或者是否正在扩容。如果需要扩容，就调用扩容方法，如果正在扩容，就帮助其扩容。
+     * @param x
+     * @param check
+     */
     private final void addCount(long x, int check) {
         CounterCell[] as;
-        long b, s;
+        long b, s;// s等价于map.size()，表示map中元素的个数
         // 如果计数盒子不是空 或者 修改 baseCount失败
         if ((as = counterCells) != null || !U.compareAndSwapLong(this, BASECOUNT, b = baseCount, s = b + x)) {
             CounterCell a;
@@ -167,23 +173,72 @@ public class ConcurrentHashMap8<K, V> {
         // 如果需要检查,检查是否需要扩容，在 putVal 方法调用时，默认就是要检查的。
         if (check >= 0) {
             Node<K, V>[] tab, nt;
-            int n, sc;
+            int n, sc;// n表示table长度，sc表示sizeCtl
+            // s大于 sizeCtl（达到扩容阈值需要扩容） 且table不是空；且 table的长度小于最大容量（可以扩容）
             while (s >= (long) (sc = sizeCtl) && (tab = table) != null && (n = tab.length) < MAXIMUM_CAPACITY) {
+                // 根据 length 得到一个标识
                 int rs = resizeStamp(n);
-                if (sc < 0) {
+                if (sc < 0) {// 表示有线程在进行扩容
+                    // 如果 sc 的低 16 位不等于 标识符（校验异常 sizeCtl 变化了）
+                    // 如果 sc == 标识符 + 1 （扩容结束了，不再有线程进行扩容）（默认第一个线程设置 sc ==rs 左移 16 位 +
+                    // 2，当第一个线程结束扩容了，就会将 sc 减一。这个时候，sc 就等于 rs + 1）
+                    // 如果 sc == 标识符 + 65535（帮助线程数已经达到最大）
+                    // 如果 nextTable == null（结束扩容了）
+                    // 如果 transferIndex <= 0 (转移状态变化了)
+                    // 结束循环
                     if ((sc >>> RESIZE_STAMP_SHIFT) != rs || sc == rs + 1 || sc == rs + MAX_RESIZERS || (nt = nextTable) == null || transferIndex <= 0)
                         break;
+                    // 如果可以帮助扩容，那么将 sc 加 1. 表示多了一个线程在帮助扩容
                     if (U.compareAndSwapInt(this, SIZECTL, sc, sc + 1)) {
-                        // transfer(tab, nt);
+                        transfer(tab, nt);
                     }
-
+                    // 如果没有线程在进行扩容，将sizeCtl的值改为1000 0001 1011 0000 0000 0000 0010，成了一个负数
                 } else if (U.compareAndSwapInt(this, SIZECTL, sc, (rs << RESIZE_STAMP_SHIFT) + 2)) {
-                    // transfer(tab, null);
+                    transfer(tab, null);
                 }
 
                 s = sumCount();
             }
         }
+    }
+
+    /**
+     * 扩容线程每次最少要迁移16个hash桶
+     */
+    private static final int MIN_TRANSFER_STRIDE = 16;
+
+    /**
+     * 扩容并且迁移数据.步骤：<br>
+     * 1.如果桶较少的话，默认一个 CPU（一个线程处理 16个桶
+     * 2.初始化临时变量 nextTable。将其在原有基础上扩容两倍
+     * 3.死循环开始转移。多线程并发转移就是在这个死循环中，根据一个 finishing 变量来判断，该变量为 true 表示扩容结束，否则继续扩容。
+     * @param tab
+     * @param nextTab
+     */
+    private final void transfer(Node<K, V>[] tab, Node<K, V>[] nextTab) {
+        int n = tab.length, stride;
+        // 将 n/8 然后除以 CPU核心数。如果得到的结果小于 16，那么就使用 16。
+        // 这里的目的是让每个 CPU 处理的桶一样多，避免出现转移任务不均匀的现象，如果桶较少的话，默认一个 CPU（一个线程）处理 16 个桶
+        stride = (NCPU > 1) ? (n >>> 3) / NCPU : n;
+        if (stride < MIN_TRANSFER_STRIDE)
+            stride = MIN_TRANSFER_STRIDE; // subdivide range
+        if (nextTab == null) { // 新的 table 尚未初始化
+            try {
+                // 扩容 2 倍
+                @SuppressWarnings("unchecked")
+                Node<K, V>[] nt = (Node<K, V>[]) new Node<?, ?>[n << 1];
+                nextTab = nt;
+            } catch (Throwable ex) { // try to cope with OOME
+                sizeCtl = Integer.MAX_VALUE;
+                return;
+            }
+            nextTable = nextTab;// 更新成员变量
+            transferIndex = n;// 更新转移下标，就是 老的 tab 的 length
+        }
+        int nextn = nextTab.length;
+        ForwardingNode<K, V> fwd = new ForwardingNode<K, V>(nextTab);
+        boolean advance = true;
+        boolean finishing = false; // to ensure sweep before committing nextTab
     }
 
     private final void fullAddCount(long x, boolean wasUncontended) {
@@ -283,7 +338,7 @@ public class ConcurrentHashMap8<K, V> {
         Node<K, V>[] tab;
         int sc;
         while ((tab = table) == null || tab.length == 0) {
-            if ((sc = sizeCtl) < 0) {// 如果一个线程发现sizeCtl<0，意味着另外的线程执行CAS操作成功
+            if ((sc = sizeCtl) < 0) {// 如果一个线程发现sizeCtl<0，意味着有另外的线程正在初始化或者扩容数据
                 Thread.yield(); // 使当前线程由执行状态，变成为就绪状态，让出cpu时间
             } else if (U.compareAndSwapInt(this, SIZECTL, sc, -1)) {
                 try {
@@ -337,7 +392,7 @@ public class ConcurrentHashMap8<K, V> {
                 if ((sc >>> RESIZE_STAMP_SHIFT) != rs || sc == rs + 1 || sc == rs + MAX_RESIZERS || transferIndex <= 0)
                     break;
                 if (U.compareAndSwapInt(this, SIZECTL, sc, sc + 1)) {
-                    // transfer(tab, nextTab);
+                    transfer(tab, nextTab);
                     break;
                 }
             }
@@ -346,7 +401,15 @@ public class ConcurrentHashMap8<K, V> {
         return table;
     }
 
+    /**
+     * n=16, 返回值为 0000 0000 0000 0000 1000 0001 1011
+     * @param n
+     * @return
+     */
     static final int resizeStamp(int n) {
+        // Integer.numberOfLeadingZeros(n)计算n高位有几个0.16的高位有27个0
+        // (1 << (RESIZE_STAMP_BITS - 1) = 0000 0000 0000 0000 1000 0000 0000
+        // 0000.即是1<<15，表示第16位为1
         return Integer.numberOfLeadingZeros(n) | (1 << (RESIZE_STAMP_BITS - 1));
     }
 
