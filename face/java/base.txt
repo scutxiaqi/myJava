@@ -10,16 +10,13 @@ String、StringBuffer、StringBuilder
 常见的异常，说出6种
 	普通异常：   FileNotFoundException、ClassNotFoundException、SQLException（操作数据库时的异常）
 	运行时异常：空指针异常、数组下标越界异常、ClassCastException（类型转换异常）
+什么是反射
+	就是程序运行时动态获得类的信息、动态执行对象方法的功能
 final, finally, finalize的区别
 	final 用于声明属性，方法和类，分别表示属性不可变，方法不可覆盖，类不可继承。
 	finally是异常处理语句结构的一部分，表示总是执行。 
 	finalize是Object类的一个方法，在垃圾收集器执行的时候会调用被回收对象的此方法
-error和exception有什么区别
-	error 表示恢复不是不可能但很困难的情况下的一种严重问题。比如说内存溢出。
-	exception 表示一种设计或实现问题。也就是说，它表示如果程序运行正常，从不会发生的情况。
 JAVA参数传递
 	基本数据类型传递的是值，引用类型传递的是引用，即地址。
-throws与throw的区别
-	throw用来在方法体内抛出异常，而throws用来在方法声明处声明异常。
 
 
