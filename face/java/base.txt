@@ -5,6 +5,7 @@ String、StringBuffer、StringBuilder
 	String是不可变字符串；后两者是可变字符序列，StringBuilder线程不安全
 为什么重写equals一定要重写hashcode？
 	equals默认是比较两者内存地址，hashcode默认根据对象内存地址计算出hash值
+	如果不重写equals，只有当两者内存地址相同，两个对象才相等
 	如果不重写hashcode，集合类如HashSet就用不了了
 final, finally, finalize的区别
 	final 用于声明属性，方法和类，分别表示属性不可变，方法不可覆盖，类不可继承。

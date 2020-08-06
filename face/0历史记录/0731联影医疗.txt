@@ -2,13 +2,17 @@ http1.0和http2.0区别
 http怎么保证传输有序性
 
 
-String、StringBuffer、StringBuilder
-equals hashcode
+字符串拼接有哪几种方式？它们的区别？ 	马马虎虎
+为什么要复写equal和hashcode？	回答得不好
+ArrayList数据结构？
+ArrayList在多线程情况下会发生什么？数据丢失
+ConcurrentHashMap怎么保证线程安全？	马马虎虎
+Spring常用注解/声明式事务注解		回答得不好
 
-Spring常用注解/事务用什么注解
 
-ArrayList 
-ConcurrentHashMap是如何保证线程安全的
+
+
+在项目中遇到的最有挑战性的问题是什么？是怎么解决的？
 
 
 

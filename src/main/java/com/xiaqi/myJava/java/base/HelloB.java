@@ -30,7 +30,8 @@ public class HelloB extends HelloA {
 	}
 
 	public static void main(String[] args) {
-		new HelloB();
+	    HelloB bb = new HelloB();
+	    
 	}
 
 }

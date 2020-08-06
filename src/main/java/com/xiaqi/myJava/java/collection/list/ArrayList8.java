@@ -40,7 +40,8 @@ public class ArrayList8<E> extends AbstractList<E> {
     public boolean add(E e) {
         ensureCapacityInternal(size + 1); // Increments modCount!!
         // 将元素添加到数组末尾
-        elementData[size++] = e;
+        elementData[size] = e;
+        size++;
         return true;
     }
 
