@@ -2,7 +2,7 @@
 	继承、封装
 	多态（一个接口，多种实现）
 String、StringBuffer、StringBuilder
-	String是不可变字符串；后两者是可变字符串，StringBuilder线程不安全
+	String是不可变字符串；后两者是可变字符序列，StringBuilder线程不安全
 为什么重写equals一定要重写hashcode？
 	equals默认是比较两者内存地址，hashcode默认根据对象内存地址计算出hash值
 	如果不重写hashcode，集合类如HashSet就用不了了
