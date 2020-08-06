@@ -1,8 +1,9 @@
 
 Spring常用注解
 	@Autowired 自动装配（默认按类型装配）
-	@Service  标注业务层组件
-	@Transactional
+	@Value    为属性注入值（值可以来自配置文件）
+	@Service  声明bean，标注业务层组件（替代配置文件中的bean定义）
+	@Transactional 声明事务
 	
 
 
