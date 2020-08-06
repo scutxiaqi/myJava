@@ -12,6 +12,8 @@ String、StringBuffer、StringBuilder
 	运行时异常：空指针异常、数组下标越界异常、ClassCastException（类型转换异常）
 什么是反射
 	就是程序运行时动态获得类的信息、动态执行对象方法的功能
+什么是数组
+	数组是一组相同数据类型元素的集合
 final, finally, finalize的区别
 	final 用于声明属性，方法和类，分别表示属性不可变，方法不可覆盖，类不可继承。
 	finally是异常处理语句结构的一部分，表示总是执行。 
