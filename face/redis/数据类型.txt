@@ -1,7 +1,8 @@
 
 redis数据类型
+	Redis中的key一定是字符串，value可以是string、list、hash、set、sortset
 	字符串 、散列、列表、集合、有序集合
-	String、Hash、List、Set、Sorted Set
+	String、Hash、List、   Set、    zSet
 应用场景
 	String 存储单个值，如论坛网站记录登录用户数（一个String类型的value最大可以存储512M）
 	Hash  键值对集合，适合存储化对象（如加油站对象stationInfo）
