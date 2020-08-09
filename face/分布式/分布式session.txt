@@ -1,0 +1,10 @@
+
+分布式session解决方案
+1.session复制
+	将session同步复制到其它服务器上。
+	Tomcat支持分布式架构，只需要server.xml配置，即可支持session同步。
+	适合小型服务器集群使用。
+
+2.redis方案
+	这是企业中使用最多的一种方式。
+3.session绑定

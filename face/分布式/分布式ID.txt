@@ -1,9 +1,8 @@
-
 号段模式
 	这是当下分布式ID生成器的主流实现方式之一。
 	原理：客户端A从数据库取出一个号段范围(0,1000]，存在本地供自己用，用完了再去数据库取。
 	          客户端B取号段范围(1001,2000] ，以此类推。
-号段范围是(当前最大id,号段的步长]
+号段范围是(当前最大id,号段的步长]，数据库表：
 CREATE TABLE id_generator (
   id int(10) NOT NULL,
   max_id bigint(20) NOT NULL COMMENT '当前最大id',
@@ -15,7 +14,6 @@ CREATE TABLE id_generator (
 
 
 雪花算法
-
 
 
 订单号的生成
