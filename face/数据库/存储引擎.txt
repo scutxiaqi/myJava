@@ -3,7 +3,7 @@ InnoDB、MyISAM的区别
 
 1）事务：MyISAM不支持，InnoDB支持
 2）锁级别： MyISAM 表锁，InnoDB 行锁、表锁
-3）MyISAM采用非聚集索引、InnoDB主键索引采用聚集索引
+3）MyISAM采用非聚集索引、InnoDB主键索引采用聚集索引和非聚集索引
 
 
 适用场景：
