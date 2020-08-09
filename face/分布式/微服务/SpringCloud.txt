@@ -5,7 +5,7 @@ SpringBoot和SpringCloud的区别
 	SpringBoot专注于快速方便的开发单个微服务应用
 
 SpringCloud和dubbo区别
-	Dubbo只是实现了微服务的一部分（）
+	Dubbo只是实现了微服务的一部分
 	SpringCloud覆盖了微服务架构的方方面面，服务治理只是其中一部分
 
 注册中心eureka和zookeeper的区别
