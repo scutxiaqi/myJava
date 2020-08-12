@@ -1,29 +1,27 @@
-
-
-
 线程池几个重要的参数
-	corePoolSize	
-	maximumPoolSize
+	corePoolSize	maximumPoolSize
 	keepAliveTime  空闲线程超时时间
 	workQueue	   
 线程池执行过程
-	执行新任务时，1.创建线程执行任务2.当工作线程数等于corePoolSize时，将任务放入workQueue，3.如果workQueue	满了，则创建线程执行4.如果工作线程数等于最大线程数，执行拒绝策略
+	执行新任务时，1.创建线程执行任务2.当工作线程数等于corePoolSize时，将任务放入workQueue，3.如果workQueue		满了，则创建线程执行4.如果工作线程数等于最大线程数，执行拒绝策略
 线程池的种类和使用场景
 	1.newCachedThreadPool   可缓存线程池：短时间内处理大量任务
 	2.newFixedThreadPool     固定数量线程池：一般情况下都用这个
 	3.newSingleThreadExecutor 单个线程线程池：用来执行有序任务
 	4.newScheduledThreadPool 定时线程池
-
 线程池调优
       CPU密集型
 	如果任务需要大量计算（CPU利用较高），则应该配置尽量少的线程，比如 CPU 个数 + 1
-
       IO密集型
 	像读写磁盘文件、读写数据库、网络请求等阻塞操作，执行IO操作时，CPU空闲时间比较多。则应该配置多一些线程，	 	这样可以更高地压榨 CPU
-
 八种阻塞队列
 	LinkedBlockingDeque 无界阻塞队列
 	ArrayBlockingQueue 有界阻塞队列
 	SynchronousQueue  没有容量阻塞队列
+拒绝策略
+	抛出异常（默认）
+	丢弃任务，但是不抛出异常
+	丢掉最老的任务（喜新厌旧）
+	由调用线程处理该任务
 
 
