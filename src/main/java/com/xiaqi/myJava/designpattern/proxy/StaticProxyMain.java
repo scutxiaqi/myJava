@@ -1,7 +1,7 @@
 package com.xiaqi.myJava.designpattern.proxy;
 
 /**
- * 静态代理模式例子
+ * 静态代理模式使用
  *
  */
 public class StaticProxyMain {

@@ -1,10 +1,10 @@
 package com.xiaqi.myJava.designpattern;
 
 /**
- * 适配器模式: 主要用于做适配，将不兼容的接口转换为可兼容的接口，让原本由于接口不兼容而不能一起工作的类可以一起工作
+ * 适配器模式: 将接口转换成想要的另外一个接口
  */
-//新版本实现类
-public class Adaptor implements ITarget {
+//适配器
+public class Adaptor{
     private Adaptee adaptee;
 
     public Adaptor(Adaptee adaptee) {
@@ -24,16 +24,7 @@ public class Adaptor implements ITarget {
     }
 }
 
-//对象适配器：基于组合
-interface ITarget {
-    void f1();
-
-    void f2();
-
-    void fc();
-}
-
-// 老版本
+// 老版本，接口不好用
 class Adaptee {
     public void fa() {
     }
