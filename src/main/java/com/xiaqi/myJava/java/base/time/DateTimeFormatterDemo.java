@@ -1,4 +1,4 @@
-package com.xiaqi.myJava.java.base;
+package com.xiaqi.myJava.java.base.time;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
-public class SimpleDateFormat8 {
+public class DateTimeFormatterDemo {
     public static void main(String[] args){
         Instant now = Instant.now();
         System.out.println(now);

@@ -1,12 +1,13 @@
 面向对象特性
-	继承、封装
-	多态（一个接口，多种实现方式）
+	继承、封装、多态（又叫重载，一个类里，方法名相同，参数不同）
 8种基本数据类型
 	       byte、short、int、long、float、double、boolean、char
 	位数 8位     16位    32     64      32         64           1            16
 基本数据类型和引用类型的区别
 	存储位置：方法中局部变量，基本类型存储在栈中，引用类型存储在堆中
 	参数传递：基本类型传值，引用类型传引用
+创建类实例的4种方法
+	new、反射、clone、反序列化
 String、StringBuffer、StringBuilder
 	String是不可变字符串；后两者是可变字符序列，StringBuilder线程不安全
 为什么重写equals和hashcode？

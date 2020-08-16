@@ -1,4 +1,4 @@
-package com.xiaqi.myJava.java.string;
+package com.xiaqi.myJava.java.base.string;
 
 /**
  * StringBuilder是非线程安全的可变字符序列，底层基于char类型数组<br>

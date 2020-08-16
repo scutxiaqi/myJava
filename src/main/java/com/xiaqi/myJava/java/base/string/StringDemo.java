@@ -1,4 +1,4 @@
-package com.xiaqi.myJava.java.string;
+package com.xiaqi.myJava.java.base.string;
 
 public class StringDemo {
     public static String str = "1234";
