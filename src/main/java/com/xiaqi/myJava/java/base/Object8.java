@@ -40,6 +40,9 @@ public class Object8 {
         wait(0);
     }
 
+    /**
+     * 对象将要被回收时先调用此方法
+     */
     protected void finalize() throws Throwable {
     }
 }
