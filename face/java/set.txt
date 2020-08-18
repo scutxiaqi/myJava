@@ -1,3 +1,0 @@
-
-HashSet
-	基于HashMap，元素存储在HashMap里的key位置。通过hashcode和equals方法去重

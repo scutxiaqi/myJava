@@ -1,0 +1,7 @@
+
+HashSet
+	基于HashMap，元素存储在HashMap里的key位置。通过hashcode和equals方法去重
+
+
+HashSet是如何保证数据不可重复的？
+	HashSet的底层其实就是HashMap，存储数据时只使用了HashMap的K值，而V值没有用到（一直使用一个相同的虚值来保存）。HashMap的K值通过hashcode和equals方法来保证数据不重复。hashcode负责确定数据存放的槽位，equals方法比较两个对象是否相等，如果相等，会覆盖掉旧数据。

@@ -17,7 +17,7 @@ public class Object8 {
     public native int hashCode();
 
     /**
-     * 比较内存地址
+     * 比较两个对象是否“相等”（默认比较内存地址）
      */
     public boolean equals(Object obj) {
         return (this == obj);

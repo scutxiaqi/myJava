@@ -5,7 +5,7 @@ ArrayList线程安全问题
         ArrayList在多线程下执行，会出现如下问题：
 	0.出现null   1.数据丢失   2.抛出异常
 ArrayList与LinkedList区别
-	ArrayList 数据结构是数组，随机访问快
+	ArrayList 底层数据结构是数组，随机访问快
 	LinkedList底层是双链表写数据时（增/删）性能更好
 ArrayList与HashSet区别
 	ArrayList元素有序，允许元素重复
