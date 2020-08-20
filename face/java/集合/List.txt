@@ -4,9 +4,6 @@ ArrayList
 ArrayList线程安全问题
         ArrayList在多线程下执行，会出现如下问题：
 	0.出现null   1.数据丢失   2.抛出异常
-ArrayList与LinkedList区别
-	ArrayList 底层数据结构是数组，随机访问快
-	LinkedList底层是双链表写数据时（增/删）性能更好
 ArrayList与HashSet区别
 	ArrayList元素有序，允许元素重复
 	HashSet 元素无序，元素不重复
@@ -17,3 +14,5 @@ CopyOnWriteArrayList
 	适合场景：读多写少。不适合大数据量(会造成频繁GC)
 Vector
 	线程安全的。实现原理和ArrayList相同
+ArrayList与LinkedList区别
+	ArrayList底层数据结构是数组，LinkedList底层是双向链表。对于随机访问元素，ArrayList优于LinkedList，因为LinkedList要遍历链表。对于新增和删除操作，LinkedList占优势，因为ArrayList需要移动数据
