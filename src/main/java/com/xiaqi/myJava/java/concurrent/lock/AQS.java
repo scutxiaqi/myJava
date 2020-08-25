@@ -13,9 +13,9 @@ public class AQS {
 
     private transient volatile Node tail;
     /**
-     * 同步状态，就是资源.
-     * state=0 锁可用
-     * state=1 锁被占用
+     * 同步状态，就是资源. <br>
+     * state=0 锁可用<br>
+     * state=1 锁被占用<br>
      * state>1 锁被占用，值表示同一线程的重入次数
      */
     private volatile int state;
@@ -63,17 +63,26 @@ public class AQS {
         return unsafe.compareAndSwapInt(node, waitStatusOffset, expect, update);
     }
 
+    /**
+     * 尝试获取锁，如果获取失败，则将当前线程包装成节点后加入等待队列
+     * 
+     * @param arg
+     */
     public final void acquire(int arg) {
         if (!tryAcquire(arg) && acquireQueued(addWaiter(Node.EXCLUSIVE), arg))
             selfInterrupt();
     }
 
     /**
-     * 在队列尾部新增一个节点。
+     * 将当前调用线程包装成一个【独占结点】，添加到等待队列尾部
+     * 
+     * @return 当前线程包装的结点
      */
     private Node addWaiter(Node mode) {
-        Node node = new Node(Thread.currentThread(), mode);// 创建一个当前线程的节点
+        // 将当前线程包装成节点
+        Node node = new Node(Thread.currentThread(), mode);
         Node pred = tail;
+        // 先尝试一次添加到尾部，如果添加成功，则不用走下面的enq方法了
         if (pred != null) {
             node.prev = pred;// 该节点的前趋指针指向tail
             if (compareAndSetTail(pred, node)) {// 将尾指针指向该节点
@@ -112,8 +121,8 @@ public class AQS {
         try {
             boolean interrupted = false;
             for (;;) {// 无限循环,直到获取锁.
-                final Node p = node.predecessor();
-                // node的前驱是head,就说明,node是将要获取锁的下一个节点.
+                final Node p = node.predecessor();// p是当前节点的前驱节点
+                // 当前节点的前驱节点是head, 则当前节点为头部节点
                 if (p == head && tryAcquire(arg)) {
                     setHead(node);
                     p.next = null; // help GC
@@ -135,36 +144,32 @@ public class AQS {
         node.prev = null;
     }
 
+    /**
+     * 判断是否需要阻塞当前线程。<br>
+     * ps: 对于在等待队列中的线程，如果要阻塞它，需要确保将来有线程可以唤醒它，AQS中通过将前驱结点的状态置为SIGNAL:-1来表示将来会唤醒当前线程，当前线程可以安心的阻塞。
+     * 
+     * @param pred
+     * @param node
+     * @return true表示需要阻塞当前线程
+     */
     private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
         int ws = pred.waitStatus;
-        if (ws == Node.SIGNAL)
-            /*
-             * This node has already set status asking a release to signal it, so it can
-             * safely park.
-             */
+        if (ws == Node.SIGNAL) // 这个状态说明当前节点的前驱将来会唤醒我，我可以安心的阻塞
             return true;
-        if (ws > 0) {
-            /*
-             * Predecessor was cancelled. Skip over predecessors and indicate retry.
-             */
+        if (ws > 0) { // CANCELLED=1 : 取消。表示后驱结点被中断或超时，需要移出队列
             do {
                 node.prev = pred = pred.prev;
             } while (pred.waitStatus > 0);
             pred.next = node;
         } else {
-            /*
-             * waitStatus must be 0 or PROPAGATE. Indicate that we need a signal, but don't
-             * park yet. Caller will need to retry to make sure it cannot acquire before
-             * parking.
-             */
             compareAndSetWaitStatus(pred, ws, Node.SIGNAL);
         }
         return false;
     }
 
     private final boolean parkAndCheckInterrupt() {
-        LockSupport.park(this);
-        return Thread.interrupted();
+        LockSupport.park(this);// 禁止当前线程进行线程调度. 类似于wait()方法
+        return Thread.interrupted(); // 测试当前线程是否已经中断
     }
 
     private void cancelAcquire(Node node) {
@@ -185,6 +190,45 @@ public class AQS {
         Thread.currentThread().interrupt();
     }
 
+    public final boolean release(int arg) {
+        if (tryRelease(arg)) {// 尝试释放锁
+            Node h = head;
+            if (h != null && h.waitStatus != 0)
+                unparkSuccessor(h);
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean tryRelease(int arg) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * 唤醒当前节点的后继节点
+     * 
+     * @param node 当前节点
+     */
+    private void unparkSuccessor(Node node) {
+        int ws = node.waitStatus;
+        if (ws < 0)
+            compareAndSetWaitStatus(node, ws, 0);
+        Node s = node.next;
+        if (s == null || s.waitStatus > 0) {
+            s = null;
+            for (Node t = tail; t != null && t != node; t = t.prev)
+                if (t.waitStatus <= 0)
+                    s = t;
+        }
+        if (s != null)
+            LockSupport.unpark(s.thread);
+    }
+
+    /**
+     * 判断队列中是否有节点
+     * 
+     * @return
+     */
     public final boolean hasQueuedPredecessors() {
         // The correctness of this depends on head being initialized
         // before tail and on head.next being accurate if the current
@@ -200,7 +244,7 @@ public class AQS {
         static final Node EXCLUSIVE = null; // 排他模式
 
         static final int CANCELLED = 1; // 取消状态
-        static final int SIGNAL = -1; // 等待触发状态
+        static final int SIGNAL = -1; // 表示后续结点被阻塞了（当前结点在入队后、阻塞前，应确保将其prev结点类型改为SIGNAL，以便prev结点取消或释放时将当前结点唤醒。）
         static final int CONDITION = -2; // 等待唤醒条件
         static final int PROPAGATE = -3; // 节点状态需要向后传播
         volatile Node prev;
@@ -217,14 +261,14 @@ public class AQS {
          */
         Node nextWaiter;
         /**
-        * INITAL：      0 - 默认，新结点会处于这种状态。
-        * CANCELLED：   1 - 取消，表示后续结点被中断或超时，需要移出队列；
-        * SIGNAL：      -1- 发信号，表示后续结点被阻塞了；（当前结点在入队后、阻塞前，应确保将其prev结点类型改为SIGNAL，以便prev结点取消或释放时将当前结点唤醒。）
-        * CONDITION：   -2- Condition专用，表示当前结点在Condition队列中，因为等待某个条件而被阻塞了；
-        * PROPAGATE：   -3- 传播，适用于共享模式。（比如连续的读操作结点可以依次进入临界区，设为PROPAGATE有助于实现这种迭代操作。）
-        * 
-        * waitStatus表示的是后续结点状态，这是因为AQS中使用CLH队列实现线程的结构管理，而CLH结构正是用前一结点某一属性表示当前结点的状态，这样更容易实现取消和超时功能。
-        */
+         * INITAL： 0 - 新结点会处于这种状态。<br>
+         * CANCELLED： 1 - 取消，表示后续结点被中断或超时，需要移出队列； <br>
+         * SIGNAL： -1 - 发信号，表示后续结点被阻塞了（当前结点在入队后、阻塞前，应确保将其prev结点类型改为SIGNAL，以便prev结点取消或释放时将当前结点唤醒。）<br>
+         * CONDITION： -2 Condition专用，表示当前结点在Condition队列中，因为等待某个条件而被阻塞了；<br>
+         * PROPAGATE： -3- 传播，适用于共享模式。（比如连续的读操作结点可以依次进入临界区，设为PROPAGATE有助于实现这种迭代操作。）
+         * 
+         * waitStatus表示的是后续结点状态，这是因为AQS中使用CLH队列实现线程的结构管理，而CLH结构正是用前一结点某一属性表示当前结点的状态，这样更容易实现取消和超时功能。
+         */
         volatile int waitStatus;
 
         Node() {
@@ -235,6 +279,12 @@ public class AQS {
             this.thread = thread;
         }
 
+        /**
+         * 返回前驱节点
+         * 
+         * @return
+         * @throws NullPointerException
+         */
         final Node predecessor() throws NullPointerException {
             Node p = prev;
             if (p == null)

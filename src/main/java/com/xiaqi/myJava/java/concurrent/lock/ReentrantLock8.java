@@ -7,8 +7,16 @@ public class ReentrantLock8 {
         sync = new NonfairSync();
     }
 
+    public ReentrantLock8(boolean fair) {
+        sync = fair ? new FairSync() : new NonfairSync();
+    }
+
     public void lock() {
         sync.lock();
+    }
+
+    public void unlock() {
+        sync.release(1);
     }
 
     static final class FairSync extends Sync {
@@ -23,13 +31,14 @@ public class ReentrantLock8 {
             final Thread current = Thread.currentThread();
             int c = getState(); // 同步状态
             if (c == 0) { // 0表示锁未被占用
+                // 如果队列中有节点，不能抢锁
                 if (!hasQueuedPredecessors() && compareAndSetState(0, acquires)) {
                     // 更新state成功，设置锁的占有线程为当前线程
                     setExclusiveOwnerThread(current);
                     return true;
                 }
             } else if (current == getExclusiveOwnerThread()) {// 如果当前线程为锁占有线程
-                int nextc = c + acquires; //重入时，同步状态累加
+                int nextc = c + acquires; // 重入时，同步状态累加
                 if (nextc < 0)
                     throw new Error("Maximum lock count exceeded");
                 setState(nextc);
@@ -78,6 +87,24 @@ public class ReentrantLock8 {
                 return true;
             }
             return false;
+        }
+
+        /**
+         * 尝试释放锁
+         * 
+         * @return 释放成功返回true
+         */
+        protected final boolean tryRelease(int releases) {
+            int c = getState() - releases; // 同步状态值减1
+            if (Thread.currentThread() != getExclusiveOwnerThread())
+                throw new IllegalMonitorStateException();
+            boolean free = false;
+            if (c == 0) {
+                free = true;
+                setExclusiveOwnerThread(null);
+            }
+            setState(c);
+            return free;
         }
     }
 }
