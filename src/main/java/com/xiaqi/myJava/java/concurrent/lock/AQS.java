@@ -13,7 +13,7 @@ public class AQS {
 
     private transient volatile Node tail;
     /**
-     * 同步状态，就是资源. <br>
+     * 同步状态，就是资源<br>
      * state=0 锁可用<br>
      * state=1 锁被占用<br>
      * state>1 锁被占用，值表示同一线程的重入次数
@@ -74,7 +74,7 @@ public class AQS {
     }
 
     /**
-     * 将当前调用线程包装成一个【独占结点】，添加到等待队列尾部
+     * 将当前调用线程包装成一个【结点】，添加到等待队列尾部
      * 
      * @return 当前线程包装的结点
      */
@@ -167,6 +167,11 @@ public class AQS {
         return false;
     }
 
+    /**
+     * 禁止当前线程进行线程调度
+     * 
+     * @return
+     */
     private final boolean parkAndCheckInterrupt() {
         LockSupport.park(this);// 禁止当前线程进行线程调度. 类似于wait()方法
         return Thread.interrupted(); // 测试当前线程是否已经中断
@@ -239,6 +244,90 @@ public class AQS {
         return h != t && ((s = h.next) == null || s.thread != Thread.currentThread());
     }
 
+    public final boolean releaseShared(int arg) {
+        if (tryReleaseShared(arg)) {
+            doReleaseShared();
+            return true;
+        }
+        return false;
+    }
+    /**
+     * 尝试释放共享锁
+     */
+    protected boolean tryReleaseShared(int arg) {
+        throw new UnsupportedOperationException();
+    }
+    /**
+     * 共享模式下的释放动作
+     */
+    private void doReleaseShared() {
+        for (;;) {
+            Node h = head;
+            if (h != null && h != tail) {
+                int ws = h.waitStatus;
+                if (ws == Node.SIGNAL) {
+                    if (!compareAndSetWaitStatus(h, Node.SIGNAL, 0))
+                        continue; // loop to recheck cases
+                    unparkSuccessor(h);
+                } else if (ws == 0 && !compareAndSetWaitStatus(h, 0, Node.PROPAGATE))
+                    continue; // loop on failed CAS
+            }
+            if (h == head) // loop if head changed
+                break;
+        }
+    }
+
+    public final void acquireSharedInterruptibly(int arg) throws InterruptedException {
+        if (Thread.interrupted())
+            throw new InterruptedException();
+        if (tryAcquireShared(arg) < 0)
+            doAcquireSharedInterruptibly(arg);
+    }
+
+    protected int tryAcquireShared(int arg) {
+        throw new UnsupportedOperationException();
+    }
+
+    private void doAcquireSharedInterruptibly(int arg) throws InterruptedException {
+        final Node node = addWaiter(Node.SHARED); // node代表当前线程包装的节点
+        boolean failed = true;
+        try {
+            for (;;) {
+                final Node p = node.predecessor();// 获取前节点
+                if (p == head) {
+                    int r = tryAcquireShared(arg); // 尝试获取锁
+                    if (r >= 0) {// r >= 0表示获取成功
+                        setHeadAndPropagate(node, r);
+                        p.next = null; // help GC
+                        failed = false;
+                        return;
+                    }
+                }
+                if (shouldParkAfterFailedAcquire(p, node) && parkAndCheckInterrupt())
+                    throw new InterruptedException();
+            }
+        } finally {
+            if (failed)
+                cancelAcquire(node);
+        }
+    }
+
+    /**
+     * 
+     * @param node
+     * @param propagate
+     */
+    private void setHeadAndPropagate(Node node, int propagate) {
+        Node h = head; // Record old head for check below
+        setHead(node); // 将当前节点设置为头节点
+        // 判断是否需要唤醒后继节点
+        if (propagate > 0 || h == null || h.waitStatus < 0 || (h = head) == null || h.waitStatus < 0) {
+            Node s = node.next;
+            if (s == null || s.isShared())
+                doReleaseShared();
+        }
+    }
+
     static final class Node {
         static final Node SHARED = new Node(); // 是否是共享模式
         static final Node EXCLUSIVE = null; // 排他模式
@@ -277,6 +366,10 @@ public class AQS {
         Node(Thread thread, Node mode) { // Used by addWaiter
             this.nextWaiter = mode;
             this.thread = thread;
+        }
+
+        final boolean isShared() {
+            return nextWaiter == SHARED;
         }
 
         /**

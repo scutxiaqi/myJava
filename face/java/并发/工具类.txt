@@ -1,5 +1,5 @@
 CountDownLatch
-	一组线程先执行完，另一个线程才执行
+	允许一个或多个线程等待，直到其他线程完成操作
 
 CyclicBarrier
 	一组线程执行，在公共屏障点 (common barrier point)等待所有线程都到达，再继续执行
