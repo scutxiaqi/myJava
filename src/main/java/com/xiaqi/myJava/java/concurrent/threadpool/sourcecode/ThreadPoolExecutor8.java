@@ -4,32 +4,37 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ThreadPoolExecutor.AbortPolicy;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ThreadPoolExecutor8 extends AbstractExecutorService {
     private final BlockingQueue<Runnable> workQueue;
-    
+
     private final ReentrantLock mainLock = new ReentrantLock();
 
     /**
      * 工作线程集合.
      */
     private final HashSet<Worker> workers = new HashSet<Worker>();
-    
+    /**
+     * 该变量记录了线程池在整个生命周期中曾经出现的最大工作线程数
+     */
     private int largestPoolSize;
 
     private volatile ThreadFactory threadFactory;
     private volatile RejectedExecutionHandler handler;
     private volatile long keepAliveTime;
-
+    private volatile boolean allowCoreThreadTimeOut;
     private volatile int corePoolSize;
     private volatile int maximumPoolSize;
 
+    private static final RejectedExecutionHandler defaultHandler = new AbortPolicy();
     /**
      * 保存线程池状态和工作线程数: 低29位: 工作线程数 | 高3位 : 线程池状态
      */
@@ -68,12 +73,33 @@ public class ThreadPoolExecutor8 extends AbstractExecutorService {
         return rs | wc;
     }
 
+    private static boolean runStateLessThan(int c, int s) {
+        return c < s;
+    }
+
+    private static boolean runStateAtLeast(int c, int s) {
+        return c >= s;
+    }
+
     private static boolean isRunning(int c) {
         return c < SHUTDOWN;
     }
-    
+
     private boolean compareAndIncrementWorkerCount(int expect) {
         return ctl.compareAndSet(expect, expect + 1);
+    }
+
+    private boolean compareAndDecrementWorkerCount(int expect) {
+        return ctl.compareAndSet(expect, expect - 1);
+    }
+
+    private void decrementWorkerCount() {
+        do {
+        } while (!compareAndDecrementWorkerCount(ctl.get()));
+    }
+
+    public ThreadPoolExecutor8(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue) {
+        this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, Executors.defaultThreadFactory(), defaultHandler);
     }
 
     /**
@@ -101,21 +127,26 @@ public class ThreadPoolExecutor8 extends AbstractExecutorService {
         this.handler = handler;
     }
 
+    /**
+     * 执行任务。此方法是线程池核心方法，步骤如下： <br>
+     * 1. 工作线程数 < 核心线程数 <br>
+     * 2. 插入任务至队列 <br>
+     * 3. 插入队列失败（队列满了）, 判断工作线程数 < 总线程池 <br>
+     * 4.
+     */
     @Override
     public void execute(Runnable command) {
         if (command == null)
             throw new NullPointerException();
 
         int c = ctl.get();
-        if (workerCountOf(c) < corePoolSize) { // CASE1: 工作线程数 < 核心线程池上限
+        if (workerCountOf(c) < corePoolSize) { // CASE1: 工作线程数 < 核心线程数
             if (addWorker(command, true)) // 添加工作线程并执行
                 return;
             c = ctl.get();
         }
-
         // 执行到此处, 说明工作线程创建失败 或 工作线程数 ≥ corePoolSize
         if (isRunning(c) && workQueue.offer(command)) { // CASE2: 插入任务至队列
-
             // 再次检查线程池状态
             int recheck = ctl.get();
             if (!isRunning(recheck) && remove(command))
@@ -127,12 +158,15 @@ public class ThreadPoolExecutor8 extends AbstractExecutorService {
     }
 
     /**
-     * 添加工作线程并执行任务
-     *
+     * 添加工作线程并执行任务。步骤如下： <br>
+     * 1. 自旋操作，主要是对线程池的状态进行一些判断，如果状态不适合接受新任务，或者工作线程数超出了限制，则直接返回false。 <br>
+     * 2. 创建工作线程并执行任务
+     * 
      * @param firstTask 如果指定了该参数, 表示将立即创建一个新工作线程执行该firstTask任务; 否则复用已有的工作线程，从工作队列中获取任务并执行
      * @param core      执行任务的工作线程归属于哪个线程池: true-核心线程池 false-非核心线程池
      */
     private boolean addWorker(Runnable firstTask, boolean core) {
+        // 步骤1
         retry: for (;;) {
             int c = ctl.get();
             int rs = runStateOf(c); // 获取线程池状态
@@ -166,7 +200,7 @@ public class ThreadPoolExecutor8 extends AbstractExecutorService {
                     continue retry;
             }
         }
-
+        // 步骤2
         boolean workerStarted = false;
         boolean workerAdded = false;
         Worker w = null;
@@ -202,9 +236,9 @@ public class ThreadPoolExecutor8 extends AbstractExecutorService {
         }
         return workerStarted;
     }
-    
+
     private void addWorkerFailed(Worker w) {
-        
+
     }
 
     public boolean remove(Runnable task) {
@@ -222,6 +256,7 @@ public class ThreadPoolExecutor8 extends AbstractExecutorService {
         private static final long serialVersionUID = -22541864613827810L;
         final Thread thread;
         Runnable firstTask;
+        volatile long completedTasks;
 
         Worker(Runnable firstTask) {
             setState(-1); // inhibit interrupts until runWorker
@@ -229,15 +264,164 @@ public class ThreadPoolExecutor8 extends AbstractExecutorService {
             this.thread = getThreadFactory().newThread(this);
         }
 
-        @Override
         public void run() {
-            // TODO Auto-generated method stub
-            
+            runWorker(this);
+        }
+
+        public void lock() {
+            acquire(1);
+        }
+
+        public boolean tryLock() {
+            return tryAcquire(1);
+        }
+
+        public void unlock() {
+            release(1);
+        }
+
+        public boolean isLocked() {
+            return isHeldExclusively();
         }
     }
-    
+
+    /**
+     * 用于执行任务, 整体流程如下：<br>
+     * 1. while循环不断地通过getTask()方法从队列中获取任务（如果工作线程自身携带着任务，则执行携带的任务）；<br>
+     * 2. 控制执行线程的中断状态，保证如果线程池正在停止，则线程必须是中断状态，否则线程必须不是中断状态；<br>
+     * 3. 调用task.run()执行任务；<br>
+     * 4. 处理工作线程的退出工作。
+     * 
+     * @param w
+     */
+    final void runWorker(Worker w) {
+        Thread wt = Thread.currentThread(); // 执行任务的线程
+        Runnable task = w.firstTask; // 任务, 如果是null则从队列取任务
+        w.firstTask = null;
+        w.unlock(); // 允许执行线程被中断
+        boolean completedAbruptly = true; // 表示是否因为中断而导致退出
+        try {
+            while (task != null || (task = getTask()) != null) { // 当task==null时会通过getTask从队列取任务
+                w.lock();
+
+                /**
+                 * 下面这个if判断的作用如下:<br>
+                 * 1.保证当线程池状态为STOP/TIDYING/TERMINATED时，当前执行任务的线程wt是中断状态(因为线程池处于上述任一状态时，均不能再执行新任务)
+                 * 2.保证当线程池状态为RUNNING/SHUTDOWN时，当前执行任务的线程wt不是中断状态
+                 */
+                if ((runStateAtLeast(ctl.get(), STOP) || (Thread.interrupted() && runStateAtLeast(ctl.get(), STOP))) && !wt.isInterrupted())
+                    wt.interrupt();
+
+                try {
+                    beforeExecute(wt, task); // 钩子方法，由子类自定义实现
+                    Throwable thrown = null;
+                    try {
+                        task.run(); // 执行任务
+                    } catch (RuntimeException x) {
+                        thrown = x;
+                        throw x;
+                    } catch (Error x) {
+                        thrown = x;
+                        throw x;
+                    } catch (Throwable x) {
+                        thrown = x;
+                        throw new Error(x);
+                    } finally {
+                        afterExecute(task, thrown); // 钩子方法，由子类自定义实现
+                    }
+                } finally {
+                    task = null;
+                    w.completedTasks++; // 完成任务数+1
+                    w.unlock();
+                }
+            }
+
+            // 执行到此处, 说明该工作线程自身既没有携带任务, 也没从任务队列中获取到任务
+            completedAbruptly = false;
+        } finally {
+            processWorkerExit(w, completedAbruptly); // 处理工作线程的退出工作
+        }
+    }
+
+    /**
+     * 从阻塞队列中获取一个任务，如果获取失败则返回null。通过自旋，不断地尝试
+     * 
+     * @return
+     */
+    private Runnable getTask() {
+        boolean timedOut = false; // 表示上次从阻塞队列中取任务时是否超时
+        for (;;) {
+            int c = ctl.get();
+            int rs = runStateOf(c); // 获取线程池状态
+            /**
+             * 以下IF用于判断哪些情况下不允许再从队列获取任务:<br>
+             * 1. 线程池进入停止状态（STOP/TIDYING/TERMINATED）, 此时即使队列中还有任务未执行, 也不再执行<br>
+             * 2. 线程池非RUNNING状态, 且队列为空
+             */
+            if (rs >= SHUTDOWN && (rs >= STOP || workQueue.isEmpty())) {
+                decrementWorkerCount(); // 工作线程数减1
+                return null;
+            }
+            int wc = workerCountOf(c); // 获取工作线程数
+            /**
+             * timed变量用于判断是否需要进行超时控制:<br>
+             * 对于核心线程池中的工作线程, 除非设置了allowCoreThreadTimeOut==true, 否则不会超时回收;<br>
+             * 对于非核心线程池中的工作线程, 都需要超时控制
+             */
+            boolean timed = allowCoreThreadTimeOut || wc > corePoolSize;
+            // 这里主要是当外部通过setMaximumPoolSize方法重新设置了最大线程数时,需要回收多出的工作线程
+            if ((wc > maximumPoolSize || (timed && timedOut)) && (wc > 1 || workQueue.isEmpty())) {
+                if (compareAndDecrementWorkerCount(c))
+                    return null;
+                continue;
+            }
+            try {
+                Runnable r = timed ? workQueue.poll(keepAliveTime, TimeUnit.NANOSECONDS) : workQueue.take();
+                if (r != null)
+                    return r;
+                timedOut = true; // 超时仍未获取到任务
+            } catch (InterruptedException retry) {
+                timedOut = false;
+            }
+        }
+    }
+
+    private void processWorkerExit(Worker w, boolean completedAbruptly) {
+
+    }
+
+    protected void beforeExecute(Thread t, Runnable r) {
+    }
+
+    protected void afterExecute(Runnable r, Throwable t) {
+    }
+
     public ThreadFactory getThreadFactory() {
         return threadFactory;
+    }
+
+    public BlockingQueue<Runnable> getQueue() {
+        return workQueue;
+    }
+
+    public int getPoolSize() {
+        final ReentrantLock mainLock = this.mainLock;
+        mainLock.lock();
+        try {
+            return runStateAtLeast(ctl.get(), TIDYING) ? 0 : workers.size();
+        } finally {
+            mainLock.unlock();
+        }
+    }
+
+    public int getLargestPoolSize() {
+        final ReentrantLock mainLock = this.mainLock;
+        mainLock.lock();
+        try {
+            return largestPoolSize;
+        } finally {
+            mainLock.unlock();
+        }
     }
 
     @Override
