@@ -15,4 +15,4 @@ CopyOnWriteArrayList
 Vector
 	线程安全的。实现原理和ArrayList相同
 ArrayList与LinkedList区别
-	ArrayList底层数据结构是数组，LinkedList底层是双向链表。对于随机访问元素，ArrayList优于LinkedList，因为LinkedList要遍历链表。对于新增和删除操作，LinkedList占优势，因为ArrayList需要移动数据
+	ArrayList底层数据结构是数组，LinkedList底层是双向链表。对于随机访问元素，ArrayList效率上优于LinkedList，因为LinkedList要遍历链表。对于新增和删除操作，LinkedList效率占优，因为ArrayList需要移动数据

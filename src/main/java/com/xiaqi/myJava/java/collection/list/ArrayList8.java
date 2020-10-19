@@ -47,6 +47,7 @@ public class ArrayList8<E> extends AbstractList<E> {
 
     /**
      * 数组容量检查，不够时进行扩容
+     * 
      * @param minCapacity 想要的最小容量
      */
     private void ensureCapacityInternal(int minCapacity) {
@@ -61,6 +62,13 @@ public class ArrayList8<E> extends AbstractList<E> {
             grow(minCapacity);
     }
 
+    /**
+     * 计算容量:
+     * 
+     * @param elementData
+     * @param minCapacity
+     * @return 1.list为空，返回默认值10(DEFAULT_CAPACITY) 2.list不为空，返回minCapacity
+     */
     private static int calculateCapacity(Object[] elementData, int minCapacity) {
         if (elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA) {
             return Math.max(DEFAULT_CAPACITY, minCapacity);
@@ -69,14 +77,15 @@ public class ArrayList8<E> extends AbstractList<E> {
     }
 
     /**
-    * 分派给arrays的最大容量
-    * 为什么要减去8呢？
-    * 因为某些VM会在数组中保留一些头字，尝试分配这个最大存储容量，可能会导致array容量大于VM的limit，最终导致OutOfMemoryError。
-    */
+     * 分派给arrays的最大容量<br>
+     * 为什么要减去8呢？<br>
+     * 因为某些VM会在数组中保留一些头字，尝试分配这个最大存储容量，可能会导致array容量大于VM的limit，最终导致OutOfMemoryError。
+     */
     private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
 
     /**
      * 数组扩容1.5倍，初始化数组长度为10
+     * 
      * @param minCapacity
      */
     private void grow(int minCapacity) {
@@ -84,7 +93,7 @@ public class ArrayList8<E> extends AbstractList<E> {
         // newCapacity代表新数组的长度，为oldCapacity的1.5倍
         int newCapacity = oldCapacity + (oldCapacity >> 1);
         if (newCapacity - minCapacity < 0)
-            newCapacity = minCapacity;
+            newCapacity = minCapacity; //list为空时，会出现此情况
         if (newCapacity - MAX_ARRAY_SIZE > 0)// 如果扩容后的容量大于临界值
             newCapacity = hugeCapacity(minCapacity);
         // 新的容量大小已经确定好了，就copy数组，改变容量大小。
@@ -119,12 +128,11 @@ public class ArrayList8<E> extends AbstractList<E> {
         int numMoved = size - index - 1;
         if (numMoved > 0) {
             /**
-             * @param      src      源数组
-             * @param      srcPos   源数组的起始位置
-             * @param      dest     目标数组
-             * @param      destPos  目标数组的起始位置
-             * @param      length   复制的长度
-             * arraycopy(Object src,int srcPos,Object dest, int destPos,int length)
+             * @param src     源数组
+             * @param srcPos  源数组的起始位置
+             * @param dest    目标数组
+             * @param destPos 目标数组的起始位置
+             * @param length  复制的长度 arraycopy(Object src,int srcPos,Object dest, int destPos,int length)
              */
             System.arraycopy(elementData, index + 1, elementData, index, numMoved);
         }
@@ -139,6 +147,7 @@ public class ArrayList8<E> extends AbstractList<E> {
 
     /**
      * 如果索引值大于ArrayList里元素的个数，则抛出索引越界异常
+     * 
      * @param index
      */
     private void rangeCheck(int index) {

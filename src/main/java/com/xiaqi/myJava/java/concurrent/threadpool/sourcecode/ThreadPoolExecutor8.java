@@ -184,9 +184,9 @@ public class ThreadPoolExecutor8 extends AbstractExecutorService {
                 int wc = workerCountOf(c); // 获取工作线程数
 
                 /**
-                 * 这个if主要是判断工作线程数是否超限, 以下任一情况属于属于超限, 直接返回:<br>
-                 * 1. 工作线程数超过最大工作线程数(2^29-1)<br>
-                 * 2. 工作线程数超过核心线程池上限(入参core为true, 表示归属核心线程池)<br>
+                 * 这个if主要是判断工作线程数是否超限, 以下任一情况属于属于超限, 直接返回: <br>
+                 * 1. 工作线程数超过最大工作线程数(2^29-1) <br>
+                 * 2. 工作线程数超过核心线程池上限(入参core为true, 表示归属核心线程池) <br>
                  * 3. 工作线程数超过总线程池上限(入参core为false, 表示归属非核心线程池)
                  */
                 if (wc >= CAPACITY || wc >= (core ? corePoolSize : maximumPoolSize))
@@ -305,7 +305,7 @@ public class ThreadPoolExecutor8 extends AbstractExecutorService {
                 w.lock();
 
                 /**
-                 * 下面这个if判断的作用如下:<br>
+                 * 下面这个if判断的作用如下: <br>
                  * 1.保证当线程池状态为STOP/TIDYING/TERMINATED时，当前执行任务的线程wt是中断状态(因为线程池处于上述任一状态时，均不能再执行新任务)
                  * 2.保证当线程池状态为RUNNING/SHUTDOWN时，当前执行任务的线程wt不是中断状态
                  */
