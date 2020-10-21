@@ -1,18 +1,21 @@
 ArrayList 
 	不带参数的构造方法生成对象时，生成一个长度为10的Object类型数组。
 	复制方式来扩充容量，扩充1.5倍
-ArrayList线程安全问题
-        ArrayList在多线程下执行，会出现如下问题：
-	0.出现null   1.数据丢失   2.抛出异常
 ArrayList与HashSet区别
 	ArrayList元素有序，允许元素重复
 	HashSet 元素无序，元素不重复
-CopyOnWriteArrayList
-	线程安全的ArrayList
-	原理：运用了一种“ 写时复制”的思想：写操作（增/删/改）时，在列表副本上写，最后将引用指向新列表
-	         读操作（不加锁）在原列表，写操作（加锁）在新列表
-	适合场景：读多写少。不适合大数据量(会造成频繁GC)
-Vector
-	线程安全的。实现原理和ArrayList相同
+
 ArrayList与LinkedList区别
-	ArrayList底层数据结构是数组，LinkedList底层是双向链表。对于随机访问元素，ArrayList效率上优于LinkedList，因为LinkedList要遍历链表。对于新增和删除操作，LinkedList效率占优，因为ArrayList需要移动数据
+	ArrayList底层数据结构是数组，LinkedList底层是双向链表。对于随机访问元素，ArrayList效率上优于LinkedList，因为	LinkedList要遍历链表。对于新增和删除操作，LinkedList效率占优，因为ArrayList需要移动数据
+ArrayList线程安全问题
+       	 ArrayList在多线程下执行，会出现如下问题：0.出现null   1.数据丢失   2.抛出异常
+
+线程安全版的ArrayList：
+       CopyOnWriteArrayList（读操作不加锁，写操作加锁）
+	线程安全原理：
+	         运用了一种“ 写时复制”的思想：写操作（增/删/改）时，在列表副本上写，最后将引用指向新列表
+	         读操作在原列表，写操作在列表副本上
+	适合场景：读多写少。不适合大数据量(会造成频繁GC)
+       Vector
+	底层原理和ArrayList相同。
+	线程安全原理：每个方法都有synchronized关键字
