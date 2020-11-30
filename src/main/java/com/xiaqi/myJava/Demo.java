@@ -1,16 +1,14 @@
 package com.xiaqi.myJava;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Demo {
 
     public static void main(String[] args) {
-        try {
-            Object xx = 1;
-            String yy = (String) xx;
-        } catch (Exception e) {
-            throw e;
-        } finally {
-            System.out.print("finally");
-        }
+        Map<String, String> map = new HashMap<String, String>();
+        map.put(null, "hahaha");
+        System.out.println(map.get(null));
     }
 
 }
