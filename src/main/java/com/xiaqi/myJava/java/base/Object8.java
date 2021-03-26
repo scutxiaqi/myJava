@@ -1,5 +1,9 @@
 package com.xiaqi.myJava.java.base;
 
+/**
+ * Object有11个方法，实际9个(wait方法有3个，合并为1个)
+ *
+ */
 public class Object8 {
     /**
      * final方法不能被继承。返回此对象的运行时类
@@ -35,6 +39,10 @@ public class Object8 {
     public final native void notifyAll8();
 
     public final native void wait8(long timeout) throws InterruptedException;
+
+    public final void wait8(long timeout, int nanos) throws InterruptedException {
+
+    }
 
     public final void wait8() throws InterruptedException {
         wait(0);
