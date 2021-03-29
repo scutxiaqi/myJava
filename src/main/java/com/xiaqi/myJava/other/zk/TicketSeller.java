@@ -1,4 +1,4 @@
-package com.xiaqi.myJava.zk;
+package com.xiaqi.myJava.other.zk;
 
 import org.apache.zookeeper.KeeperException;
 

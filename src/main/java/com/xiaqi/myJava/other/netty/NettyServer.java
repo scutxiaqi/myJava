@@ -1,4 +1,4 @@
-package com.xiaqi.myJava.netty;
+package com.xiaqi.myJava.other.netty;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelHandlerContext;

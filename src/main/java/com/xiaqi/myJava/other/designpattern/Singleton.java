@@ -1,4 +1,4 @@
-package com.xiaqi.myJava.designpattern;
+package com.xiaqi.myJava.other.designpattern;
 
 /**
  * 单例模式（饿汉式）：保证一个类仅有一个实例

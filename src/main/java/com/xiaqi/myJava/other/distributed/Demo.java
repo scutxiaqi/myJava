@@ -1,4 +1,4 @@
-package com.xiaqi.myJava.distributed;
+package com.xiaqi.myJava.other.distributed;
 
 public class Demo {
     public static void main(String[] args) {

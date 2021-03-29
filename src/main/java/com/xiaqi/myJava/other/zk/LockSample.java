@@ -1,4 +1,4 @@
-package com.xiaqi.myJava.zk;
+package com.xiaqi.myJava.other.zk;
 
 import java.io.IOException;
 import java.util.Collections;

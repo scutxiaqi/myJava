@@ -1,4 +1,4 @@
-package com.xiaqi.myJava.lombok;
+package com.xiaqi.myJava.other.lombok;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

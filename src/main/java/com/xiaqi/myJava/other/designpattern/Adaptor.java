@@ -1,4 +1,4 @@
-package com.xiaqi.myJava.designpattern;
+package com.xiaqi.myJava.other.designpattern;
 
 /**
  * 适配器模式: 将接口转换成想要的另外一个接口

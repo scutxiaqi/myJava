@@ -1,4 +1,4 @@
-package com.xiaqi.myJava.distributed;
+package com.xiaqi.myJava.other.distributed;
 
 /**
  * 雪花算法

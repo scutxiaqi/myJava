@@ -1,4 +1,4 @@
-package com.xiaqi.myJava.suanfa;
+package com.xiaqi.myJava.other.suanfa;
 
 import java.util.Arrays;
 
