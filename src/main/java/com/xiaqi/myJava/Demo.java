@@ -8,7 +8,7 @@ public class Demo {
     public static void main(String[] args) {
         Map<String, String> map = new HashMap<String, String>();
         map.put(null, "hahaha");
-        System.out.println(map.get(null));
+        System.out.println(System.currentTimeMillis());
     }
 
 }

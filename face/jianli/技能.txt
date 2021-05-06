@@ -1,0 +1,12 @@
+
+Java：熟悉
+Spring、SpringMVC、Mybatis、SSM 整合：掌握
+MySQL：掌握
+Redis、RabbitMQ、Dubbo、Zookeeper、Netty：掌握
+SpringBoot、SpringCloud、Docker：了解
+Hbase、Mycat：了解
+HTML5、Bootstrap、JavaScript、LayUI、jQuery、Vue.js：了解
+
+
+
+
