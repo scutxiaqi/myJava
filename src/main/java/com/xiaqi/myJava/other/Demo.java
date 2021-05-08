@@ -1,4 +1,4 @@
-package com.xiaqi.myJava;
+package com.xiaqi.myJava.other;
 
 import com.xiaqi.myJava.java.annotation.Person;
 
